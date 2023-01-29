@@ -7,4 +7,3 @@ class ProcessedDataModel(BaseModel):
     title: str
     text: str
     questions: List[str] = []
-

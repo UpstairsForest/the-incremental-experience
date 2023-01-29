@@ -10,7 +10,9 @@ JSON_OUT = "processed.json"
 CO_KEY = "Kwi3nCYBE9ihcpvY8TNa3DTsCe0rKGGXqOnmrVrh"
 
 
-def process_raw_and_save(processed: Dict[str, ProcessedDataModel], raw: Dict[str, ProcessedDataModel]):
+def process_raw_and_save(
+    processed: Dict[str, ProcessedDataModel], raw: Dict[str, ProcessedDataModel]
+):
     """
     Take title-text pairs and add questions to all if missing, saves incrementally
 
@@ -23,7 +25,9 @@ def process_raw_and_save(processed: Dict[str, ProcessedDataModel], raw: Dict[str
     for i, _ in enumerate(data.items()):
         title, o = _
         if len(o.questions) > 0:
-            print(f"{process_raw_and_save}: skipping processed, {(i + 1)} out of {len(raw)} finished")
+            print(
+                f"{process_raw_and_save}: skipping processed, {(i + 1)} out of {len(raw)} finished"
+            )
             continue
 
         o.questions = generate_questions_for_text(o.text)
@@ -33,7 +37,9 @@ def process_raw_and_save(processed: Dict[str, ProcessedDataModel], raw: Dict[str
         with open(JSON_OUT, "w") as f:
             json.dump({title: o.dict() for title, o in processed.items()}, f)
 
-        print(f"{process_raw_and_save}: generated, {(i + 1)} out of {len(raw)} finished")
+        print(
+            f"{process_raw_and_save}: generated, {(i + 1)} out of {len(raw)} finished"
+        )
 
 
 def generate_questions_for_text(tx: str) -> List[str]:
@@ -45,7 +51,7 @@ def generate_questions_for_text(tx: str) -> List[str]:
 
     print(f"{generate_questions_for_text}: generating cohere response")
     response = co.generate(
-        model='command-xlarge-20221108',
+        model="command-xlarge-20221108",
         prompt=prompt,
         max_tokens=200,
         temperature=0.1,
@@ -54,7 +60,7 @@ def generate_questions_for_text(tx: str) -> List[str]:
         frequency_penalty=0,
         presence_penalty=0,
         stop_sequences=[],
-        return_likelihoods='NONE',
+        return_likelihoods="NONE",
     )
 
     out: List[str] = []
@@ -70,7 +76,12 @@ def generate_questions_for_text(tx: str) -> List[str]:
 co = cohere.Client(CO_KEY)
 raw_pairs: Dict[str, str] = json.load(open(JSON_IN))
 processed_pairs: Dict[str, dict] = json.load(open(JSON_OUT))
-raw_data = {title: ProcessedDataModel(title=title, text=text) for title, text in raw_pairs.items()}
-processed_data = {title: ProcessedDataModel.parse_obj(o) for title, o in processed_pairs.items()}
+raw_data = {
+    title: ProcessedDataModel(title=title, text=text)
+    for title, text in raw_pairs.items()
+}
+processed_data = {
+    title: ProcessedDataModel.parse_obj(o) for title, o in processed_pairs.items()
+}
 
 process_raw_and_save(processed_data, raw_data)
