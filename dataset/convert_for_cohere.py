@@ -12,7 +12,7 @@ SEPARATOR = "--"
 def sample_from_data(data: ProcessedDataModel) -> str:
     out = ""
     for q in data.questions:
-        out += f"question: {q}, text: {data.text}" + SEPARATOR
+        out += f"question: {q}\ntext: {data.text}\n{SEPARATOR}\n\n"
 
     return out
 
